@@ -8,18 +8,19 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using ZendeskApi.Contracts.Models;
 
 namespace ZendeskApi.Client.Http
 {
     public class HttpChannel : IHttpChannel
     {
-        public IHttpResponse Get(IHttpRequest request, string resource = "", string operation = "")
+        public IHttpResponse Get(IHttpRequest request, string clientName = "", string resourceName = "", string operation = "")
         {
             return MakeSynchronousRequest(request, "GET");
         }
 
-        public async Task<IHttpResponse> GetAsync(IHttpRequest request, string resource = "", string operation = "")
+        public async Task<IHttpResponse> GetAsync(IHttpRequest request, string clientName = "", string resourceName = "", string operation = "")
         {
             IHttpResponse response;
             using (var client = new HttpClient())
@@ -42,12 +43,12 @@ namespace ZendeskApi.Client.Http
             return response;
         }
 
-        public IHttpResponse Post(IHttpRequest request, string resource = "", string operation = "")
+        public IHttpResponse Post(IHttpRequest request, string clientName = "", string resourceName = "", string operation = "")
         {
             return MakeSynchronousRequest(request, "POST");
         }
 
-        public IHttpResponse Post(IHttpRequest request, IHttpPostedFile fileBase, string resource = "", string operation = "")
+        public IHttpResponse Post(IHttpRequest request, IHttpPostedFile fileBase, string clientName = "", string resourceName = "", string operation = "")
         {
             var webRequest = (HttpWebRequest)ConfigureRequest(request, "POST");
 
@@ -67,7 +68,7 @@ namespace ZendeskApi.Client.Http
             return response;
         }
 
-        public async Task<IHttpResponse> PostAsync(IHttpRequest request, string resource = "", string operation = "")
+        public async Task<IHttpResponse> PostAsync(IHttpRequest request, string clientName = "", string resourceName = "", string operation = "")
         {
             IHttpResponse response;
             using (var client = new HttpClient())
@@ -91,12 +92,12 @@ namespace ZendeskApi.Client.Http
             return response;
         }
 
-        public IHttpResponse Put(IHttpRequest request, string resource = "", string operation = "")
+        public IHttpResponse Put(IHttpRequest request, string clientName = "", string resourceName = "", string operation = "")
         {
             return MakeSynchronousRequest(request, "PUT"); 
         }
 
-        public async Task<IHttpResponse> PutAsync(IHttpRequest request, string resource = "", string operation = "")
+        public async Task<IHttpResponse> PutAsync(IHttpRequest request, string clientName = "", string resourceName = "", string operation = "")
         {
             IHttpResponse response;
             using (var client = new HttpClient())
@@ -120,12 +121,12 @@ namespace ZendeskApi.Client.Http
             return response;
         }
 
-        public IHttpResponse Delete(IHttpRequest request, string resource = "", string operation = "")
+        public IHttpResponse Delete(IHttpRequest request, string clientName = "", string resourceName = "", string operation = "")
         {
             return MakeSynchronousRequest(request, "DELETE");
         }
 
-        public async Task<IHttpResponse> DeleteAsync(IHttpRequest request, string resource = "", string operation = "")
+        public async Task<IHttpResponse> DeleteAsync(IHttpRequest request, string clientName = "", string resourceName = "", string operation = "")
         {
             IHttpResponse response;
             using (var client = new HttpClient())
@@ -306,7 +307,7 @@ namespace ZendeskApi.Client.Http
             }
         }
 
-        private static void AddContent(WebRequest webRequest, IHttpRequest request, string resource = "", string operation = "")
+        private static void AddContent(WebRequest webRequest, IHttpRequest request)
         {
             webRequest.ContentType = request.ContentType;
 
@@ -343,7 +344,7 @@ namespace ZendeskApi.Client.Http
             return webRequest;
         }
 
-        private static HttpContent BuildHttpContent(IHttpRequest request, string resource = "", string operation = "")
+        private static HttpContent BuildHttpContent(IHttpRequest request)
         {
             var stringContent = new StringContent(request.Content);
             stringContent.Headers.ContentType = new MediaTypeHeaderValue(request.ContentType);
